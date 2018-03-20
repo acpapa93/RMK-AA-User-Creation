@@ -1,0 +1,8 @@
+/.env
+/users.csv
+/usersOutput.csv
+/userFailures.csv
+/chromedriver.exe
+/debug.log
+/build_usercreate_amd64_3.6
+/build_email_amd64_3.6
