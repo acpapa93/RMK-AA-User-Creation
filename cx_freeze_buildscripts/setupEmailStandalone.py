@@ -10,7 +10,7 @@ build_exe_options = {"packages":
 					"excludes": []}
 
 setup(
-	name="createUsers",
+	name="emailUsers",
 	version="0.1",
-	description="Create Advanced Analytics users.",
-	executables=[Executable("usercreate.py")])
+	description="Email user credentials.",
+	executables=[Executable("emailStandalone.py")])

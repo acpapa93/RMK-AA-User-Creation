@@ -52,5 +52,5 @@ Folder Structure
 	|usercreate.exe (required): this is the actual .exe program to create the users.
 	|Other files in this directory are all required.
 |build_email_amd64_3.6 (required): .exe version of email standalone script.
-	|emailUsers.exe (required): this is the actual .exe program to email credentials.
+	|emailStandalone.exe (required): this is the actual .exe program to email credentials.
 	|Other files in this directory are all required.
