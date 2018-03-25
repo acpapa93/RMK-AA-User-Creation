@@ -75,26 +75,30 @@ def createUserPwd():
             row = [x.strip(' ') for x in row]
 
             ##Validate user info provided
-            #ensure DC is accurate
-            if row[2] not in accepted_dataCenters:
-                browser.close()
-                sys.exit("User " + row[0] + """ has an incorrectly entered or unknown datacenter. Available datacenter options are 'Rackspace' or 'rackspace','DC12' or 'dc12, or 'DC17' or 'dc17'. Please update and try again.""")
+            #remove trailing commmas for when user info is added via Excel.
+            if row[5] =="":
+                row = row[:5]
 
-            #ensure profile is restricted or standard
-            if row[3] not in accepted_userTypes:
-                browser.close()
-                sys.exit("User " + row[0] + """ does not have the appropriate user type. Available options are 'Restricted', 'restricted','Standard', 'standard', "site manager", "Site Manager", "sitemanager", "Sitemanager", "Internal", or "Internal". Please update and try again.""")
-                
-            #ensure there is no trailing comma or too many or few inputs on the list.
+            #ensure each row has required number of arguements
             if len(row)!=5:
                 browser.close()
-                sys.exit("User " + row[0] + """ has a trailing comma in the csv and / or too many inputs. Please ensure there are no additional inputs provided and try again.""")
+                sys.exit("User " + row[0] + """ has incorrect number of inputs. Please check arguements provided in users.csv and try again.""")
 
             #ensure all parameters are filled in
             for x in row:
                 if x == "":
                     browser.close()
                     sys.exit("User " + row[0] + " has a blank input. Please update and try again.")
+
+            #ensure DC is supported
+            if row[2] not in accepted_dataCenters:
+                browser.close()
+                sys.exit("User " + row[0] + """ has an incorrectly entered or unknown datacenter. Available datacenter options are 'Rackspace' or 'rackspace','DC12' or 'dc12, or 'DC17' or 'dc17'. Please update and try again.""")
+
+            #ensure profile is of the accepted user types
+            if row[3] not in accepted_userTypes:
+                browser.close()
+                sys.exit("User " + row[0] + """ does not have the appropriate user type. Available options are 'Restricted', 'restricted','Standard', 'standard', "site manager", "Site Manager", "sitemanager", "Sitemanager", "Internal", or "Internal". Please update and try again.""")
 
             #create password
             pwd = ''.join(random.choices(string.ascii_letters + string.digits, k=14))
@@ -218,7 +222,7 @@ def managedReportingAdmin(managedReportingAdminUrl, row):
         saveUser=browser.find_element_by_id("saveLink")
         saveUser.click()
 
-    except error as error:
+    except Exception as error:
         print("error in user creation from managedReportingAdmin.")
         print(error)
 
@@ -294,7 +298,7 @@ def login():
                 form = browser.find_element_by_id('login')
                 form.submit()
 
-            except error as error:
+            except Exception as error:
                 print(error)
    
     print("Logging in completed. Starting viewbuilder.")
@@ -459,7 +463,7 @@ def viewBuilder(DcArray, vbURL, userType, DCFlag):
                 )
                 newRecruiter = browser.find_element_by_id(user)
                 newRecruiter.click()
-            except error as error:
+            except Exception as error:
                 print("unable to find user: "+ user)
 
         #click reassign button
@@ -534,7 +538,7 @@ def viewBuilder(DcArray, vbURL, userType, DCFlag):
         #accept the alert that pops up
         browser.switch_to.alert.accept()
 
-    except error as error:
+    except Exception as error:
         print(error)
 
 
@@ -619,8 +623,12 @@ def testLogin(user, loginUrl):
             if user[4] == "Yes" or user[4] == "yes":
                 emailCredentials(user[0], user[5], loginUrl)
 
-    except error as error:
-        print("Issue logging in.")
+    except Exception as e:
+        print(e)
+        print("Unable to verify profile setup successful.")
+        with open(userFailures, 'w', newline="") as failures:
+                writer = csv.writer(failures)
+                writer.writerow(user)
 
 
 #email credentials
